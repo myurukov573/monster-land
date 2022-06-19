@@ -5,9 +5,9 @@ from settings import *
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacle_sprites):
         super().__init__(groups)
-        self.image = pygame.image.load('./test/attack_down.png').convert_alpha()
+        self.image = pygame.image.load('./media/test/player.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos) # full size of the image
-        self.hit_box = self.rect.inflate(0, -60)  # changing the size of the image for overlapping
+        self.hit_box = self.rect.inflate(0, -26)  # changing the size of the image for overlapping
 
         self.direction = pygame.math.Vector2()  # by default x: 0 y: 0
         self.speed = 5
