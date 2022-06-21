@@ -9,6 +9,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load('./media/test/player.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)  # full size of the image
         self.hit_box = self.rect.inflate(0, -26)  # changing the size of the image for overlapping
+        self.obstacle_sprites = obstacle_sprites
 
         # graphics setup
         self.animations = None
@@ -19,12 +20,9 @@ class Player(pygame.sprite.Sprite):
 
         # movement
         self.direction = pygame.math.Vector2()  # by default x: 0 y: 0
-        self.speed = 5
         self.attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
-
-        self.obstacle_sprites = obstacle_sprites
 
         # Weapon
         self.create_attack = create_attack
@@ -34,6 +32,13 @@ class Player(pygame.sprite.Sprite):
         self.can_switch_weapon = True
         self.weapon_switch_time = None
         self.switch_duration_cooldown = 200
+
+        # stats
+        self.stats = {'health': 100, 'energy': 60, 'attack': 10, 'magic': 4, 'speed': 5}
+        self.health = self.stats['health']
+        self.energy = self.stats['energy']
+        self.exp = 123
+        self.speed = self.stats['speed']
 
     def import_player_assets(self):
         """adding all player images in the dictionary"""
