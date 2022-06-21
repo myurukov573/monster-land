@@ -4,9 +4,16 @@ HEIGHT = 720
 FPS = 60
 TITLE_SIZE = 64
 
+weapon_data = {
+    'sword': {'cooldown': 100, 'damage': 15, 'graphic': './media/weapons/sword/full.png'},
+    'lance': {'cooldown': 400, 'damage': 30, 'graphic': './media/weapons/lance/full.png'},
+    'axe': {'cooldown': 300, 'damage': 20, 'graphic': './media/weapons/axe/full.png'},
+    'rapier': {'cooldown': 50, 'damage': 8, 'graphic': './media/weapons/rapier/full.png'},
+    'sai': {'cooldown': 80, 'damage': 10, 'graphic': './media/weapons/sai/full.png'},
+}
 
 """x = obstacles, p = player, ' ' = empty space that the player can walk on """
-WORLD_MAP = [
+WORLD_MAP = [ # example
     ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
     ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
     ['x', ' ', 'p', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],

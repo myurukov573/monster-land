@@ -7,6 +7,7 @@ from support import import_csv_layout, import_folder
 from tile import Tile
 from player import Player
 from debug import debug
+from weapon import Weapon
 
 
 class Level:
@@ -21,8 +22,20 @@ class Level:
         # sprite group setup
         self.visible_sprites = YSortCameraGroup()  # custom sprites Group
         self.obstacle_sprites = pygame.sprite.Group()
+
+        # attack sprites
+        self.current_attack = None
         # sprite setup
         self.create_map()
+
+    def create_attack(self):
+        self.current_attack = Weapon(self.player, [self.visible_sprites])
+
+    def destroy_attack(self):
+        if self.current_attack:
+            self.current_attack.kill()
+        else:
+            self.current_attack = None
 
     def create_map(self):
         """ Creating a map using the WORLD_Map matrix if col is x will be a wall if it is p will be the player"""
@@ -61,7 +74,8 @@ class Level:
         #         if col == 'p':
         #             self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites)
 
-        self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites, self.create_attack,
+                             self.destroy_attack)
 
     def run(self):
         # update and draw the game
