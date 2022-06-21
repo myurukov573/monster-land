@@ -32,6 +32,12 @@ weapon_data = {
     'sai': {'cooldown': 80, 'damage': 10, 'graphic': './media/weapons/sai/full.png'},
 }
 
+# magic
+magic_data = {
+    'flame': {'strength': 5, 'cost': 20, 'graphic': './media/particles/flame/fire.png'},
+    'heal': {'strength': 20, 'cost': 10, 'graphic': './media/particles/heal/heal.png'}
+}
+
 """x = obstacles, p = player, ' ' = empty space that the player can walk on """
 WORLD_MAP = [  # example
     ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
