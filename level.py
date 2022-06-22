@@ -2,6 +2,7 @@ from random import choice
 
 import pygame
 
+from enemy import Enemy
 from settings import *
 from support import import_csv_layout, import_folder
 from tile import Tile
@@ -51,7 +52,8 @@ class Level:
         layouts = {
             'boundary': import_csv_layout('media/csv/map/map_FloorBlocks.csv'),
             'grass': import_csv_layout('media/csv/map/map_Grass.csv'),
-            'object': import_csv_layout('media/csv/map/map_Objects.csv')
+            'object': import_csv_layout('media/csv/map/map_Objects.csv'),
+            'entities': import_csv_layout('./media/csv/map/map_Entities.csv')
         }
 
         graphics = {
@@ -74,6 +76,25 @@ class Level:
                             # create an object tile
                             surf = graphics['objects'][int(col)]
                             Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'object', surf)
+
+                        if style == 'entities':
+                            if col == '394':
+                                self.player = Player((x, y),
+                                                     [self.visible_sprites],
+                                                     self.obstacle_sprites,
+                                                     self.create_attack,
+                                                     self.destroy_attack,
+                                                     self.create_magic)
+                            else:
+                                if col == '390':
+                                    monster_name = 'bamboo'
+                                elif col == '391':
+                                    monster_name = 'spirit'
+                                elif col == '392':
+                                    monster_name = 'raccoon'
+                                else:
+                                    monster_name = 'squid'
+                                Enemy(monster_name, (x, y), [self.visible_sprites], self.obstacle_sprites)
         # for row_index, row in enumerate(WORLD_MAP):
         #     for col_index, col in enumerate(row):
         #         x = col_index * TITLE_SIZE
@@ -83,15 +104,14 @@ class Level:
         #         if col == 'p':
         #             self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites)
 
-        self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites, self.create_attack,
-                             self.destroy_attack, self.create_magic)
-
     def run(self):
         # update and draw the game
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
+        self.visible_sprites.enemy_update(self.player)
         # debug(self.player.direction)
         self.ui.display(self.player)
+
 
 class YSortCameraGroup(pygame.sprite.Group):
     """First part: Function as a camera """
@@ -123,3 +143,8 @@ class YSortCameraGroup(pygame.sprite.Group):
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_position)
+
+    def enemy_update(self, player):
+        enemy_sprite = [sprite for sprite in self.sprites() if hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'enemy']
+        for enemy in enemy_sprite:
+            enemy.enemy_update(player)
