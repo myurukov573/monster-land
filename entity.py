@@ -1,3 +1,5 @@
+from math import sin
+
 import pygame
 
 
@@ -50,3 +52,10 @@ class Entity(pygame.sprite.Sprite):
                         """checking if the collision is it up"""
                         """moving the up site of the player to the down site of the obstacle"""
                         self.hit_box.top = sprite.hit_box.bottom
+
+    def wave_value(self):
+        value = sin(pygame.time.get_ticks())
+        if value >= 0:
+            return 255
+        else:
+            return 0
