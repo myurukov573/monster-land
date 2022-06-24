@@ -148,6 +148,11 @@ class Player(Entity):
                 if 'attack' in self.status:
                     self.status = self.status.replace('_attack', '_idle')
 
+    def energy_recovery(self):
+        if self.energy < self.stats['energy']:
+            self.energy += 0.005 * self.stats['magic']
+        else:
+            self.energy = self.stats['energy']
     # def move(self, speed):
     #     if self.direction.magnitude() != 0:
     #         """normalize the speed does not matter what direction is going always will be one"""
@@ -235,9 +240,16 @@ class Player(Entity):
         full_damage = base_damage + weapon_damage
         return full_damage
 
+    def get_full_magic_damage(self):
+        base_damage = self.stats['magic']
+        spell_damage = magic_data[self.magic]['strength']
+        full_damage = base_damage + spell_damage
+        return full_damage
+
     def update(self):
         self.input()
         self.cooldowns()
         self.get_status()
         self.animate()
         self.move(self.speed)
+        self.energy_recovery()

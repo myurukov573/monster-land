@@ -3,6 +3,7 @@ from random import choice, randint
 import pygame
 
 from enemy import Enemy
+from magic import MagicPlayer
 from particles import AnimationPLayer
 from settings import *
 from support import import_csv_layout, import_folder
@@ -40,12 +41,17 @@ class Level:
 
         # particles
         self.animation_player = AnimationPLayer()
+        self.magic_player = MagicPlayer(self.animation_player)
 
     def create_attack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites, self.attack_sprites])
 
     def create_magic(self, style, strength, cost):
-        pass
+        if style == 'heal':
+            self.magic_player.heal(self.player, strength, cost, [self.visible_sprites])
+
+        if style == 'flame':
+            self.magic_player.flame(self.player, cost, [self.visible_sprites, self.attack_sprites])
 
     def destroy_attack(self):
         if self.current_attack:
@@ -85,8 +91,8 @@ class Level:
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
                     if col != '-1':
-                        x = col_index * TITLE_SIZE
-                        y = row_index * TITLE_SIZE
+                        x = col_index * TILE_SIZE
+                        y = row_index * TILE_SIZE
                         if style == 'boundary':
                             Tile((x, y), [self.obstacle_sprites], 'invisible')
                         if style == 'grass':
