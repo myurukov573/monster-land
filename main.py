@@ -15,6 +15,10 @@ class Game:
 
         self.level = Level()
 
+        # sound
+        main_sound = pygame.mixer.Sound('./media/audio/main.ogg')
+        main_sound.play(loops=-1)
+
     def run(self):
         """Game loop"""
         while True:
@@ -22,9 +26,12 @@ class Game:
                 if event.type == pygame.QUIT:  # checking if we quit the game
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_m:
+                        self.level.toggle_menu()
 
             """Filling the display black, updating the screen, adding the fps"""
-            self.screen.fill('black')
+            self.screen.fill(WATER_COLOR)
             self.level.run()  # drawing and updating
             pygame.display.update()
             self.clock.tick(FPS)

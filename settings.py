@@ -3,7 +3,12 @@ WIDTH = 1280
 HEIGHT = 720
 FPS = 60
 TILE_SIZE = 64
-
+HIT_BOX_OFFSET = {
+    'player': -26,
+    'object': -40,
+    'grass': -10,
+    'invisible': 0
+}
 # ui
 BAR_HEIGHT = 20
 HEALTH_BAR_WIDTH = 200
@@ -22,6 +27,12 @@ TEXT_COLOR = '#EEEEEE'
 HEALTH_COLOR = 'red'
 ENERGY_COLOR = 'blue'
 UI_BORDER_COLOR_ACTIVE = 'gold'
+
+# upgrade menu
+TEXT_COLOR_SELECTION = '#111111'
+BAR_COLOR = '#EEEEEE'
+BAR_COLOR_SELECTION = '#111111'
+UPGRADE_BG_COLOR_SELECTED = '#EEEEEE'
 
 # weapons
 weapon_data = {

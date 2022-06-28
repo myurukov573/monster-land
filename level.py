@@ -11,6 +11,7 @@ from tile import Tile
 from player import Player
 from debug import debug
 from ui import UI
+from upgrade import Upgrade
 from weapon import Weapon
 
 
@@ -23,7 +24,7 @@ class Level:
         """obstacle_sprites - group for sprites that the player can collide with"""
         # getting display surface anywhere from our code (like from main Game self.screen)
         self.display_surface = pygame.display.get_surface()
-
+        self.game_paused = False
         # sprite group setup
         self.visible_sprites = YSortCameraGroup()  # custom sprites Group
         self.obstacle_sprites = pygame.sprite.Group()
@@ -38,6 +39,7 @@ class Level:
 
         # user interface
         self.ui = UI()
+        self.upgrade = Upgrade(self.player)
 
         # particles
         self.animation_player = AnimationPLayer()
@@ -125,7 +127,7 @@ class Level:
                                 Enemy(monster_name,
                                       (x, y),
                                       [self.visible_sprites, self.attackable_sprite],
-                                      self.obstacle_sprites, self.damage_player, self.trigger_death_particles)
+                                      self.obstacle_sprites, self.damage_player, self.trigger_death_particles, self.add_xp)
         # for row_index, row in enumerate(WORLD_MAP):
         #     for col_index, col in enumerate(row):
         #         x = col_index * TITLE_SIZE
@@ -144,17 +146,30 @@ class Level:
             # spawn particles
             self.animation_player.create_particles(attack_type, self.player.rect.center, [self.visible_sprites])
 
+    def add_xp(self, amount):
+        self.player.exp += amount
+
     def trigger_death_particles(self, pos, particle_type):
         self.animation_player.create_particles(particle_type, pos, self.visible_sprites)
+
+    def toggle_menu(self):
+        self.game_paused = not self.game_paused
 
     def run(self):
         # update and draw the game
         self.visible_sprites.custom_draw(self.player)
-        self.visible_sprites.update()
-        self.visible_sprites.enemy_update(self.player)
-        self.player_attack_logic()
-        # debug(self.player.direction)
         self.ui.display(self.player)
+
+        if self.game_paused:
+            # display upgrade menu
+            self.upgrade.display()
+        else:
+            # run the game
+            self.visible_sprites.update()
+            self.visible_sprites.enemy_update(self.player)
+            self.player_attack_logic()
+
+        # debug(self.player.direction)
 
 
 class YSortCameraGroup(pygame.sprite.Group):
