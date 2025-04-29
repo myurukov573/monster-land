@@ -2,13 +2,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY . .
+COPY requirements.txt .
 
-RUN apt-get update && apt-get install -y 
-RUN apt-get -y update 
-RUN pip install --upgrade pip
-RUN if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-RUN pip install pygame
+RUN apt-get update && apt-get install -y \
+    && pip install --upgrade pip \
+    && pip install -r requirements.txt \
+    && pip install pygame
 
 EXPOSE 8000
 
