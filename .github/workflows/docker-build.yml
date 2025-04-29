@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Build and Push Docker image with SSH
 
 on:
   push:
@@ -6,25 +6,31 @@ on:
       - main
 
 jobs:
-  docker:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      # Стъпка 1: Клониране на репозитория с SSH
+      - name: Checkout repository using SSH
         uses: actions/checkout@v3
-
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      # Стъпка 2: Създаване на Docker образ
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Add GitHub to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      # Стъпка 3: Логване в Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # Стъпка 4: Билдване на Docker образ
       - name: Build Docker image
-        run: docker build -t your_image_name .
+        run: docker build -t your_dockerhub_username/your_image_name .
 
+      # Стъпка 5: Push на Docker образа
       - name: Push Docker image
-        run: docker push your_image_name
+        run: docker push your_dockerhub_username/your_image_name
