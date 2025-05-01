@@ -2,25 +2,30 @@
 - name: Deploy Docker container from GHCR
   hosts: all
   become: true
-
   vars:
     image_name: "ghcr.io/myurukov573/monster-land:latest"
     container_name: "monster-land"
 
   tasks:
+    - name: Ensure community.docker collection is available
+      ansible.builtin.meta: require_collection
+      collections:
+        - community.docker
+
     - name: Login to GHCR
-      docker_login:
+      community.docker.docker_login:
         registry_url: ghcr.io
         username: "myurukov573"
         password: "{{ ghcr_token }}"
 
-    - name: Pull image from GHCR
-      docker_image:
+    - name: Pull latest image
+      community.docker.docker_image:
         name: "{{ image_name }}"
         source: pull
+        force_source: true
 
-    - name: Start or update container
-      docker_container:
+    - name: Ensure container is running
+      community.docker.docker_container:
         name: "{{ container_name }}"
         image: "{{ image_name }}"
         state: started
