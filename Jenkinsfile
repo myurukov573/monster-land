@@ -28,6 +28,14 @@ pipeline {
                 '''
             }
         }
+        stage('Install Ansible Collections') {
+            steps {
+                dir('ansible') {
+                    sh 'ansible-galaxy collection install -r requirements.yml'
+                }
+            }
+        }
+
 
         stage('Deploy via Ansible') {
             steps {
