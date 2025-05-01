@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "ghcr.io/myurukov573/monster-land"
+        TAG = "latest"
+        GHCR_TOKEN = credentials('ghcr_pat') 
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/myurukov573/monster-land.git'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME:$TAG .'
+            }
+        }
+
+        stage('Push to GHCR') {
+            steps {
+                sh '''
+                    echo $GHCR_TOKEN | docker login ghcr.io -u myurukov573 --password-stdin
+                    docker push $IMAGE_NAME:$TAG
+                '''
+            }
+        }
+
+        stage('Deploy via Ansible') {
+            steps {
+                dir('ansible') {
+                    sh 'ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN"'
+                }
+            }
+        }
+    }
+}
