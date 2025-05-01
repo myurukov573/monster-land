@@ -15,6 +15,13 @@
         version: main
         force: yes
 
+    - name: Sync latest code from GitHub
+      ansible.builtin.git:
+        repo: https://github.com/myurukov573/monster-land.git
+        dest: /opt/monster-land
+        version: main
+        force: yes
+
     - name: Log in to GHCR
       community.docker.docker_login:
         registry_url: ghcr.io
