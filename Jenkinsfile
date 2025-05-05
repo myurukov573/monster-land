@@ -58,8 +58,15 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                dir('ansible') {
-                    sh 'ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN"'
+                withCredentials([sshUserPrivateKey(credentialsId: 'ansible-ssh-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                    dir('ansible') {
+                        sh '''
+                            mkdir -p ~/.ssh
+                            cp $SSH_KEY ~/.ssh/deploy_key
+                            chmod 600 ~/.ssh/deploy_key
+                            ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN"
+                        '''
+                    }
                 }
             }
         }
