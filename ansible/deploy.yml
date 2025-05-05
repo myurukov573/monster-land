@@ -41,3 +41,18 @@
         host: "127.0.0.1"
         port: 8081
         timeout: 30
+
+    - name: Copy Jenkins backup script
+      ansible.builtin.copy:
+        src: jenkins-backup/jenkins_backup.sh
+        dest: /usr/local/bin/jenkins_backup.sh
+        mode: '0755'
+
+    - name: Cron job to run Jenkins backup daily at 2am
+      ansible.builtin.cron:
+        name: "Daily Jenkins Backup"
+        minute: "0"
+        hour: "2"
+        job: "/usr/local/bin/jenkins_backup.sh"
+
+
