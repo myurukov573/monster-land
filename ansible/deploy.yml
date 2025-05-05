@@ -44,7 +44,7 @@
 
     - name: Copy Jenkins backup script
       ansible.builtin.copy:
-        src: jenkins-backup/jenkins_backup.sh
+        src: monitoring/jenkins/jenkins_backup.sh
         dest: /usr/local/bin/jenkins_backup.sh
         mode: '0755'
 
