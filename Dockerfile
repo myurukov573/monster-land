@@ -11,6 +11,6 @@ RUN apt-get update && apt-get install -y \
     && pip install --upgrade pip \
     && pip install pygame
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["python", "main.py"]

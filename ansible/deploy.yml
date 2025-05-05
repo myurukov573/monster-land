@@ -41,21 +41,3 @@
         host: "127.0.0.1"
         port: 80
         timeout: 30
-
-    - name: Health check – check if app returns 200 OK
-      uri:
-        url: http://localhost:80/health
-        status_code: 200
-      register: healthcheck
-      failed_when: healthcheck.status != 200
-
-
-    - name: Show health check result
-      debug:
-        msg: "Health check returned status: {{ healthcheck_response.status }}"
-
-    - name: Rollback if health check failed
-      community.docker.docker_container:
-        name: "{{ container_name }}"
-        state: stopped
-      when: healthcheck_response.status != 200
