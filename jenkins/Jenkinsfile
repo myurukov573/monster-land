@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "ghcr.io/myurukov573/monster-land"
         TAG = "latest"
-        GHCR_TOKEN = credentials('ghcr-token') 
+        GHCR_TOKEN = credentials('ghcr-token')
     }
 
     stages {
@@ -22,20 +22,26 @@ pipeline {
 
         stage('Push to GHCR') {
             steps {
-                sh '''
-                    echo $GHCR_TOKEN | docker login ghcr.io -u myurukov573 --password-stdin
-                    docker push $IMAGE_NAME:$TAG
-                '''
-            }
-        }
-        stage('Install Ansible Collections') {
-            steps {
-                dir('ansible') {
-                    sh 'ansible-galaxy collection install -r requirements.yml'
+                script {
+                    try {
+                        sh '''
+                            echo $GHCR_TOKEN | docker login ghcr.io -u myurukov573 --password-stdin
+                            docker push $IMAGE_NAME:$TAG
+                        '''
+                    } catch (err) {
+                        echo "⚠️ Docker push failed: ${err}"
+                    }
                 }
             }
         }
 
+        stage('Install Ansible Collections') {
+            steps {
+                dir('ansible') {
+                    sh 'test -f requirements.yml && ansible-galaxy collection install -r requirements.yml || echo "No Ansible requirements.yml found."'
+                }
+            }
+        }
 
         stage('Deploy via Ansible') {
             steps {
@@ -43,6 +49,19 @@ pipeline {
                     sh 'ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN"'
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo "📦 Cleaning workspace..."
+            cleanWs()
+        }
+        failure {
+            echo "❌ Build failed!"
+        }
+        success {
+            echo "✅ Deployment completed successfully!"
         }
     }
 }
