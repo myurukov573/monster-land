@@ -11,7 +11,7 @@ pipeline {
     environment {
         IMAGE_NAME = "ghcr.io/myurukov573/monster-land"
         TAG = "latest"
-        GHCR_TOKEN = credentials('ghcr-token')
+        GHCR_TOKEN = credentials('github-token')
     }
 
     stages {
