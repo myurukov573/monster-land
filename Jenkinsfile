@@ -49,6 +49,13 @@ pipeline {
             }
         }
 
+        stage('Add SSH Host Key') {
+            steps {
+                // Доверяваме се на SSH ключа на целевия хост
+                sh 'ssh-keyscan 37.27.251.233 >> ~/.ssh/known_hosts'
+            }
+        }
+
         stage('Deploy via Ansible') {
             steps {
                 dir('ansible') {
