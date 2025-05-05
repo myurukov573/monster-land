@@ -6,6 +6,7 @@
   vars:
     image_name: "ghcr.io/myurukov573/monster-land:latest"
     container_name: "monster-land"
+    backup_script_path: "/usr/local/bin/jenkins_backup.sh"
 
   tasks:
     - name: Sync latest code from GitHub repo
@@ -44,16 +45,15 @@
 
     - name: Copy Jenkins backup script
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/../monitoring/jenkins/jenkins_backup.sh"
-        dest: /usr/local/bin/jenkins_backup.sh
+        src: "files/jenkins_backup.sh"
+        dest: "{{ backup_script_path }}"
         mode: '0755'
         force: true
 
-    - name: Cron job to run Jenkins backup daily at 2am
+    - name: Ensure cron job exists for Jenkins backup
       ansible.builtin.cron:
         name: "Daily Jenkins Backup"
         minute: "0"
         hour: "2"
-        job: "/usr/local/bin/jenkins_backup.sh"
-
-
+        job: "{{ backup_script_path }}"
+        state: present
