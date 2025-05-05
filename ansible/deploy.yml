@@ -43,13 +43,12 @@
         timeout: 30
 
     - name: Health check – check if app returns 200 OK
-      ansible.builtin.uri:
-        url: http://localhost:80/health
-        method: GET
+      uri:
+        url: http://localhost:8000/health
         status_code: 200
-        return_content: yes
-      register: healthcheck_response
-      failed_when: healthcheck_response.status != 200
+      register: healthcheck
+      failed_when: healthcheck.status != 200
+
 
     - name: Show health check result
       debug:
