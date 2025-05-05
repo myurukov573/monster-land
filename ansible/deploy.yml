@@ -44,9 +44,10 @@
 
     - name: Copy Jenkins backup script
       ansible.builtin.copy:
-        src: ../../monitoring/jenkins/jenkins_backup.sh
+        src: "{{ playbook_dir }}/../monitoring/jenkins/jenkins_backup.sh"
         dest: /usr/local/bin/jenkins_backup.sh
         mode: '0755'
+        force: true
 
     - name: Cron job to run Jenkins backup daily at 2am
       ansible.builtin.cron:
