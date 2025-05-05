@@ -58,7 +58,7 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ansible-ssh-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-agent-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     dir('ansible') {
                         sh '''
                             mkdir -p ~/.ssh
