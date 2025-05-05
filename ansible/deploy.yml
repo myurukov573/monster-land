@@ -1,4 +1,3 @@
----
 - name: Deploy Docker container from GHCR
   hosts: all
   become: true
