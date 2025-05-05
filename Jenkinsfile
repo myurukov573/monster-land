@@ -1,12 +1,5 @@
 pipeline {
     agent { label 'jenkins-agent-1' }
-  stages {
-    stage('Deploy') {
-      steps {
-        sh 'echo Hello from Jenkins Agent!'
-      }
-    }
-  }
 
     environment {
         IMAGE_NAME = "ghcr.io/myurukov573/monster-land"
@@ -15,6 +8,12 @@ pipeline {
     }
 
     stages {
+        stage('Say Hello') {
+            steps {
+                sh 'echo Hello from Jenkins Agent!'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/myurukov573/monster-land.git'
