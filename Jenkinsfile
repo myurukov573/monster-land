@@ -62,8 +62,8 @@ pipeline {
                     dir('ansible') {
                         sh '''
                             mkdir -p ~/.ssh
-                            cp $SSH_KEY ~/.ssh/deploy_key
-                            chmod 600 ~/.ssh/deploy_key
+                            cp $SSH_KEY ~/.ssh/jenkins_agent_key
+                            chmod 600 ~/.ssh/jenkins_agent_key
                             ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN"
                         '''
                     }
