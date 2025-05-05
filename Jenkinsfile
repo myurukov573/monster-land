@@ -58,16 +58,19 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-agent-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                    dir('ansible') {
-                        sh '''
-                            mkdir -p ~/.ssh
-                            cp $SSH_KEY ~/.ssh/jenkins_agent_key
-                            chmod 600 ~/.ssh/jenkins_agent_key
-                            ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN"
-                        '''
-                    }
-                }
+               withCredentials([
+                sshUserPrivateKey(credentialsId: 'jenkins-agent-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
+                usernamePassword(credentialsId: 'ansible-sudo-creds', passwordVariable: 'SUDO_PASS', usernameVariable: 'SUDO_USER')
+            ]) {
+                dir('ansible') {
+                    sh '''
+                        mkdir -p ~/.ssh
+                        cp $SSH_KEY ~/.ssh/jenkins_agent_key
+                        chmod 600 ~/.ssh/jenkins_agent_key
+                        ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN" --extra-vars "ansible_become_pass=$SUDO_PASS"
+                    '''
+    }
+}
             }
         }
     }
