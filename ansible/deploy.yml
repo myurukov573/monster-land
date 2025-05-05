@@ -44,7 +44,7 @@
 
     - name: Health check – check if app returns 200 OK
       uri:
-        url: http://localhost:8000/health
+        url: http://localhost:80/health
         status_code: 200
       register: healthcheck
       failed_when: healthcheck.status != 200
