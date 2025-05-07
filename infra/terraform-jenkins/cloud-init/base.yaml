@@ -1,0 +1,10 @@
+#Автоматичен скрипт, който се изпълнява при стартиране на сървъра
+packages:
+  - ufw
+  - fail2ban
+
+runcmd:
+  - ufw allow OpenSSH
+  - ufw enable
+  - systemctl enable fail2ban
+  - systemctl start fail2ban
