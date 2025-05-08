@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monster-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monster
+  template:
+    metadata:
+      labels:
+        app: monster
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80

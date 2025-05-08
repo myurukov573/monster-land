@@ -1,0 +1,16 @@
+replicaCount: 3
+
+image:
+  repository: nginx
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  host: monster-app.local
+  path: /
+  pathType: Prefix
