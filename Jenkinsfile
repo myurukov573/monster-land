@@ -19,6 +19,16 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/myurukov573/monster-land.git'
             }
         }
+        
+        stage('Open SSH Tunnel') {
+            steps {
+                sshagent(['mac-ssh-key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -fN -L 5433:49.12.79.128:5432 youruser@78.159.150.117 || echo "Tunnel already open or failed"
+                    '''
+                }
+            }
+        }
 
         stage('Docker Build') {
             steps {
