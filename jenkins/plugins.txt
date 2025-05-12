@@ -1,9 +1,9 @@
-workflow-aggregator          # За pipeline поддръжка
-git                          # За Git SCM интеграция
-docker-plugin                # Позволява работа с Docker агенти
-ssh-slaves                   # За свързване на агент чрез SSH
-configuration-as-code       # JCasC поддръжка
-credentials                 # За управление на SSH ключове и токени
-ansicolor                   # По-четим терминален изход
-job-dsl                     # За създаване на Jenkins jobs чрез код
-github                      # За GitHub webhook и GitHub auth
+workflow-aggregator          
+git                         
+docker-plugin                
+ssh-slaves                   
+configuration-as-code       
+credentials                 
+ansicolor                   
+job-dsl                     
+github                      
