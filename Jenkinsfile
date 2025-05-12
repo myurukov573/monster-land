@@ -20,16 +20,6 @@ pipeline {
             }
         }
 
-        stage('Open SSH Tunnel') {
-            steps {
-                sshagent(['mac-ssh-key']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -fN -L 5433:49.12.79.128:5432 martyyurukov8@78.159.150.117 || echo "Tunnel already open or failed"
-                    '''
-                }
-            }
-        }
-
         stage('Docker Build') {
             steps {
                 sh 'docker build -t $IMAGE_NAME:$TAG .'
