@@ -35,7 +35,7 @@ pipeline {
                             docker push $IMAGE_NAME:$TAG
                         '''
                     } catch (err) {
-                        echo "⚠️ Docker push failed: ${err}"
+                        echo "Docker push failed: ${err}"
                     }
                 }
             }
@@ -77,14 +77,14 @@ pipeline {
 
     post {
         always {
-            echo "📦 Cleaning workspace..."
+            echo "Cleaning workspace..."
             cleanWs()
         }
         failure {
-            echo "❌ Build failed!"
+            echo "Build failed!"
         }
         success {
-            echo "✅ Deployment completed successfully!"
+            echo "Deployment completed successfully!"
         }
     }
 }
