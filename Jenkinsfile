@@ -20,16 +20,6 @@ pipeline {
             }
         }
 
-        stage('Test DB Connection via Proxy') {
-            steps {
-                withCredentials([string(credentialsId: 'pg-password', variable: 'DB_PASS')]) {
-                    sh '''
-                        echo "SELECT now();" | PGPASSWORD=$DB_PASS psql -h 78.159.150.117 -p 5433 -U jenkins -d monsterdb
-                    '''
-                }
-            }
-        }
-
         stage('Docker Build') {
             steps {
                 sh 'docker build -t $IMAGE_NAME:$TAG .'
