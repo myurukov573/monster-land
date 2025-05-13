@@ -4,16 +4,9 @@ pipeline {
     environment {
         IMAGE_NAME = "ghcr.io/myurukov573/monster-land"
         TAG = "latest"
-        GHCR_TOKEN = credentials('ghcr-token')
     }
 
     stages {
-        stage('Say Hello') {
-            steps {
-                sh 'echo Hello from Jenkins Agent!'
-            }
-        }
-
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/myurukov573/monster-land.git'
@@ -26,49 +19,37 @@ pipeline {
             }
         }
 
-        stage('Push to GHCR') {
-            steps {
-                script {
-                    try {
-                        sh '''
-                            echo $GHCR_TOKEN | docker login ghcr.io -u myurukov573 --password-stdin
-                            docker push $IMAGE_NAME:$TAG
-                        '''
-                    } catch (err) {
-                        echo "Docker push failed: ${err}"
-                    }
-                }
-            }
-        }
-
-        stage('Install Ansible Collections') {
+        stage('Extract GHCR Token from Vault') {
             steps {
                 dir('ansible') {
-                    sh 'test -f requirements.yml && ansible-galaxy collection install -r requirements.yml || echo "No Ansible requirements.yml found."'
+                    sh '''
+                        echo "$VAULT_PASSWORD" > .vault_pass.txt
+                        GHCR_TOKEN=$(ansible-vault view vault/vault.yml --vault-password-file .vault_pass.txt | grep ghcr_token | awk '{print $2}')
+                        echo "GHCR_TOKEN=$GHCR_TOKEN" > ../ghcr.env
+                        shred -u .vault_pass.txt
+                    '''
                 }
             }
         }
 
-        stage('Add SSH Host Key') {
+        stage('Push to GHCR') {
             steps {
-                sh 'ssh-keyscan 37.27.251.233 >> ~/.ssh/known_hosts'
+                sh '''
+                    source ghcr.env
+                    echo $GHCR_TOKEN | docker login ghcr.io -u myurukov573 --password-stdin
+                    docker push $IMAGE_NAME:$TAG
+                '''
             }
         }
 
         stage('Deploy via Ansible') {
             steps {
-                withCredentials([
-                    sshUserPrivateKey(credentialsId: 'jenkins-agent-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
-                    usernamePassword(credentialsId: 'ansible-sudo-creds', passwordVariable: 'SUDO_PASS', usernameVariable: 'SUDO_USER')
-                ]) {
-                    dir('ansible') {
-                        sh '''
-                            mkdir -p ~/.ssh
-                            cp $SSH_KEY ~/.ssh/jenkins_agent_key
-                            chmod 600 ~/.ssh/jenkins_agent_key
-                            ansible-playbook -i inventory.ini deploy.yml -e "ghcr_token=$GHCR_TOKEN" --extra-vars "ansible_become_pass=$SUDO_PASS"
-                        '''
-                    }
+                dir('ansible') {
+                    sh '''
+                        echo "$VAULT_PASSWORD" > .vault_pass.txt
+                        ansible-playbook deploy.yml --vault-password-file .vault_pass.txt
+                        shred -u .vault_pass.txt
+                    '''
                 }
             }
         }
@@ -76,14 +57,8 @@ pipeline {
 
     post {
         always {
-            echo "Cleaning workspace..."
+            sh 'rm -f ghcr.env'
             cleanWs()
-        }
-        failure {
-            echo "Build failed!"
-        }
-        success {
-            echo "Deployment completed successfully!"
         }
     }
 }

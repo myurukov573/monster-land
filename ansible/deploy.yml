@@ -2,18 +2,25 @@
   hosts: all
   become: true
 
+  vars_files:
+    - vault/vault.yml
+
   vars:
     image_name: "ghcr.io/myurukov573/monster-land:latest"
     container_name: "monster-land"
     backup_script_path: "/usr/local/bin/jenkins_backup.sh"
 
   tasks:
-    - name: Sync latest code from GitHub repo
-      ansible.builtin.git:
-        repo: https://github.com/myurukov573/monster-land.git
-        dest: /opt/monster-land
-        version: main
-        force: yes
+    - name: Set private key for connection
+      copy:
+        content: "{{ ansible_ssh_private_key }}"
+        dest: ~/.ssh/jenkins_agent_key
+        mode: '0600'
+
+    - name: Set up SSH config for Ansible
+      set_fact:
+        ansible_ssh_private_key_file: ~/.ssh/jenkins_agent_key
+        ansible_user: "{{ ansible_ssh_user }}"
 
     - name: Log in to GHCR
       community.docker.docker_login:
