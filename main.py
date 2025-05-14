@@ -1,14 +1,20 @@
+import os
+os.environ['SDL_AUDIODRIVER'] = 'dummy'  
+
 import pygame
 import sys
 from level import Level
-
 from settings import *
-
 
 class Game:
     def __init__(self):
-        """Initiating pygame, creating display surface, creating a clock"""
+        """Инициализира pygame, дисплей, часовник и звук"""
         pygame.init()
+        try:
+            pygame.mixer.init()
+        except pygame.error as e:
+            print(f"[AUDIO WARNING] Mixer init failed: {e}")
+
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption('Monster Land')
         self.clock = pygame.time.Clock()
@@ -16,27 +22,28 @@ class Game:
         self.level = Level()
 
         # sound
-        main_sound = pygame.mixer.Sound('./media/audio/main.ogg')
-        main_sound.play(loops=-1)
+        try:
+            main_sound = pygame.mixer.Sound('./media/audio/main.ogg')
+            main_sound.play(loops=-1)
+        except pygame.error as e:
+            print(f"[AUDIO WARNING] Could not load or play sound: {e}")
 
     def run(self):
-        """Game loop"""
+        """Основният игрови цикъл"""
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:  # checking if we quit the game
+                if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_m:
                         self.level.toggle_menu()
 
-            """Filling the display black, updating the screen, adding the fps"""
             self.screen.fill(WATER_COLOR)
-            self.level.run()  # drawing and updating
+            self.level.run()
             pygame.display.update()
             self.clock.tick(FPS)
 
-
 if __name__ == '__main__':
-    game = Game()  # instance of the Game class
-    game.run()  # calling the run method
+    game = Game()
+    game.run()

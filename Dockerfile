@@ -12,4 +12,6 @@ RUN apt-get update && apt-get install -y \
 
 EXPOSE 8000
 
+ENV SDL_AUDIODRIVER=dummy
+
 CMD ["python", "main.py"]
