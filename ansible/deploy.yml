@@ -1,5 +1,5 @@
 - name: Deploy Docker container from GHCR
-  hosts: all
+  hosts: jenkins_agents
   become: true
 
   vars_files:
@@ -41,7 +41,7 @@
         state: started
         restart_policy: always
         ports:
-          - "8081:3000"
+          - "8081:8000"
 
     - name: Wait for container to be reachable on port 8081
       ansible.builtin.wait_for:
